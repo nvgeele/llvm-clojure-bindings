@@ -1,5 +1,5 @@
-(ns ast
-  (:use [llvm]
+(ns llvm-clojure-bindings.ast
+  (:use [llvm-clojure-bindings.llvm]
         [matchure]
         [clojure.walk]))
 
@@ -15,7 +15,7 @@
   (let [build! (fn [f]
                  (cond-match f
                              [:func ?name ?params ?ret & ?body]
-                             (do 
+                             (do
                                (let [func (add-function mymod (str name) (eval [ret (vec params)]))]
                                  (swap! fmap #(assoc % name func))
                                  (when (seq body)
@@ -24,14 +24,9 @@
 
                              [:call ?name & ?args]
                              (do
-                                (build-call b (@fmap name) (map (partial wrap-value! b) args)))
+                               (build-call b (@fmap name) (map (partial wrap-value! b) args)))
 
                              [:return ?code] (LLVMBuildRet b (wrap-value! b code)))
                  f
                  )]
     (prewalk build! ast)))
-
-
-
-
-

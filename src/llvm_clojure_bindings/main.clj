@@ -1,8 +1,8 @@
-(ns main
-  (:require [example-ast])
-  (:use [ast ]
-        [parser]
-        [llvm]
+(ns llvm-clojure-bindings.main
+  (:require [llvm-clojure-bindings.example-ast])
+  (:use [llvm-clojure-bindings.ast]
+        [llvm-clojure-bindings.parser]
+        [llvm-clojure-bindings.llvm]
         [clojure.java.shell :only [sh]]))
 
 (defn link-and-run [obj-file]
@@ -33,9 +33,6 @@
 
 (defn -main []
   (let [input (slurp "input.program")]
-   (run-test (parse-str input))
-   #_ (run-test example-ast/ast1)
+    (run-test (parse-str input))
+    #_ (run-test example-ast/ast1)
     ))
-
-
-

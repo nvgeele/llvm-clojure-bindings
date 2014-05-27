@@ -1,4 +1,4 @@
-(ns parser
+(ns llvm-clojure-bindings.parser
   (:use [eu.dnetlib.clojure clarsec monad]))
 
 (def p-exp (<|> natural stringLiteral))
@@ -16,12 +16,12 @@
 (def p-func-body (braces (many (<* p-stmt semi))))
 
 (def p-func-proto
-     (let-bind [_ (symb "func")
-                name (<$> symbol identifier)
-                params (parens (<|> (<$> (comp list keyword) (symb "..."))
-                                    (sep-by (<$> symbol identifier) comma)))
-                ret-type (<$> symbol identifier)]
-               (result `(:func ~name ~params ~ret-type))))
+  (let-bind [_ (symb "func")
+             name (<$> symbol identifier)
+             params (parens (<|> (<$> (comp list keyword) (symb "..."))
+                                 (sep-by (<$> symbol identifier) comma)))
+             ret-type (<$> symbol identifier)]
+            (result `(:func ~name ~params ~ret-type))))
 
 (def p-func (let-bind [proto p-func-proto
                        body p-func-body]

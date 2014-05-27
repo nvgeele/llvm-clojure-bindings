@@ -1,5 +1,5 @@
-(ns llvm
-  (:use [native])
+(ns llvm-clojure-bindings.llvm
+  (:use [llvm-clojure-bindings.native])
   (:import com.sun.jna.Pointer)
   (:import com.sun.jna.Function))
 
@@ -20,15 +20,13 @@
                 ["LLVMModuleCreateWithName" Pointer 1]
                 ["LLVMBuildGlobalString" Pointer 3]
                 ["LLVMBuildGlobalStringPtr" Pointer 3]
-                ["LLVMGetTypeName" Pointer 2]
                 ["LLVMAppendBasicBlock" Pointer 2]
                 ["LLVMPositionBuilderAtEnd" Pointer 2]
                 ["LLVMTypeOf" Pointer 1]
-                ["LLVMOpaqueType" Pointer 0]
                 ["LLVMFunctionType" Pointer 4]
                 ["LLVMAddFunction" Pointer 3]]]
   (doseq [[name ret-type num-args] llvm-api]
-    (import-llvm-c-func "LLVM-2.9" name ret-type num-args)))
+    (import-llvm-c-func "LLVM-3.3" name ret-type num-args)))
 
 
 (def wrap-func-type)
@@ -57,11 +55,11 @@
 
 (defmulti wrap-value class)
 (defmethod wrap-value Double [v]
-           (LLVMConstReal (wrap-type (class v)) v))
+  (LLVMConstReal (wrap-type (class v)) v))
 (defmethod wrap-value String [v]
-           (LLVMConstString v (count v) false))
+  (LLVMConstString v (count v) false))
 (defmethod wrap-value Integer [v]
-           (LLVMConstInt (wrap-type (class v)) v false))
+  (LLVMConstInt (wrap-type (class v)) v false))
 (defmethod wrap-value :default [v] v)
 
 (defn build-call [builder fn args]
